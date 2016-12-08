@@ -1,576 +1,878 @@
-swagger: "2.0"
+swagger: '2.0'
 info:
-  description: |
-    This is a sample server Petstore server.
-
-    [Learn about Swagger](http://swagger.io) or join the IRC channel `#swagger` on irc.freenode.net.
-
-    For this sample, you can use the api key `special-key` to test the authorization filters
-  version: "1.0.0"
-  title: Swagger Petstore
-  termsOfService: http://helloreverb.com/terms/
-  contact:
-    name: apiteam@swagger.io
-  license:
-    name: Apache 2.0
-    url: http://www.apache.org/licenses/LICENSE-2.0.html
-host: petstore.swagger.io
-basePath: /v2
-schemes:
-  - http
+  version: v1
+  title: REST API Documentation for Schoolbus
+  description: API Sample
+  termsOfService: None
+basePath: /api
 paths:
-  /pets:
-    post:
-      tags:
-        - pet
-      summary: Add a new pet to the store
-      description: ""
-      operationId: addPet
-      consumes:
-        - application/json
-        - application/xml
-      produces:
-        - application/json
-        - application/xml
-      parameters:
-        - in: body
-          name: body
-          description: Pet object that needs to be added to the store
-          required: false
-          schema:
-            $ref: "#/definitions/Pet"
-      responses:
-        "405":
-          description: Invalid input
-      security:
-        - petstore_auth:
-          - write_pets
-          - read_pets
-    put:
-      tags:
-        - pet
-      summary: Update an existing pet
-      description: ""
-      operationId: updatePet
-      consumes:
-        - application/json
-        - application/xml
-      produces:
-        - application/json
-        - application/xml
-      parameters:
-        - in: body
-          name: body
-          description: Pet object that needs to be added to the store
-          required: false
-          schema:
-            $ref: "#/definitions/Pet"
-      responses:
-        "405":
-          description: Validation exception
-        "404":
-          description: Pet not found
-        "400":
-          description: Invalid ID supplied
-      security:
-        - petstore_auth:
-          - write_pets
-          - read_pets
-  /pets/findByStatus:
+  /inspections:
     get:
       tags:
-        - pet
-      summary: Finds Pets by status
-      description: Multiple status values can be provided with comma seperated strings
-      operationId: findPetsByStatus
+        - Inspection
+      consumes: []
       produces:
+        - text/plain
         - application/json
-        - application/xml
-      parameters:
-        - in: query
-          name: status
-          description: Status values that need to be considered for filter
-          required: false
-          type: array
-          items:
-            type: string
-          collectionFormat: multi
+        - text/json
       responses:
-        "200":
-          description: successful operation
+        '200':
+          description: OK
           schema:
             type: array
             items:
-              $ref: "#/definitions/Pet"
-        "400":
-          description: Invalid status value
-      security:
-        - petstore_auth:
-          - write_pets
-          - read_pets
-  /pets/findByTags:
+              $ref: '#/definitions/Inspection'
+        "404":
+          description: Inspection not found
+      deprecated: false
+  /inspections/{inspection-id}:
     get:
       tags:
-        - pet
-      summary: Finds Pets by tags
-      description: Muliple tags can be provided with comma seperated strings. Use tag1, tag2, tag3 for testing.
-      operationId: findPetsByTags
+        - Inspection
+      consumes: []
       produces:
+        - text/plain
         - application/json
-        - application/xml
-      parameters:
-        - in: query
-          name: tags
-          description: Tags to filter by
-          required: false
-          type: array
-          items:
-            type: string
-          collectionFormat: multi
+        - text/json
       responses:
-        "200":
-          description: successful operation
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/Inspection'
+        "404":
+          description: Inspection not found
+      deprecated: false
+    parameters:
+      - name: inspection-id
+        in: path
+        description: Id of Inspection to fetch
+        required: true
+        type: integer  
+  /schoolbuses/{schoolbus-id}:
+    get:
+      description: Returns a specific SchoolBus object
+      tags:
+        - SchoolBus
+      produces:
+        - text/plain
+        - application/json
+        - text/json
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/SchoolBus'
+        "404":
+           description: SchoolBus not found
+      deprecated: false
+    parameters:
+      - name: schoolbus-id
+        in: path
+        description: Id of SchoolBus to fetch
+        required: true
+        type: integer
+  /schoolbuses/{schoolbus-id}/inspections:
+    get:
+      tags:
+        - Inspection
+      operationId: InspectionsGet
+      consumes: []
+      produces:
+        - text/plain
+        - application/json
+        - text/json
+      responses:
+        '200':
+          description: OK
           schema:
             type: array
             items:
-              $ref: "#/definitions/Pet"
-        "400":
-          description: Invalid tag value
-      security:
-        - petstore_auth:
-          - write_pets
-          - read_pets
-  /pets/{petId}:
+              $ref: '#/definitions/Inspection'
+        "404":
+          description: SchoolBus not found
+      deprecated: false
+    parameters:
+      - name: schoolbus-id
+        in: path
+        description: Id of SchoolBus to fetch Inspections for
+        required: true
+        type: integer
+  /schoolbuses/{schoolbus-id}/notes:
     get:
+      description: Returns notes for a particular SchoolBus.
       tags:
-        - pet
-      summary: Find pet by ID
-      description: Returns a pet when ID < 10.  ID > 10 or nonintegers will simulate API error conditions
-      operationId: getPetById
+        - SchoolBus
       produces:
+        - text/plain
         - application/json
-        - application/xml
-      parameters:
-        - in: path
-          name: petId
-          description: ID of pet that needs to be fetched
-          required: true
-          type: integer
-          format: int64
+        - text/json
       responses:
-        "404":
-          description: Pet not found
-        "200":
-          description: successful operation
-          schema:
-            $ref: "#/definitions/Pet"
-        "400":
-          description: Invalid ID supplied
-      security:
-        - api_key: []
-        - petstore_auth:
-          - write_pets
-          - read_pets
-    post:
-      tags:
-        - pet
-      summary: Updates a pet in the store with form data
-      description: ""
-      operationId: updatePetWithForm
-      consumes:
-        - application/x-www-form-urlencoded
-      produces:
-        - application/json
-        - application/xml
-      parameters:
-        - in: path
-          name: petId
-          description: ID of pet that needs to be updated
-          required: true
-          type: string
-        - in: formData
-          name: name
-          description: Updated name of the pet
-          required: true
-          type: string
-        - in: formData
-          name: status
-          description: Updated status of the pet
-          required: true
-          type: string
-      responses:
-        "405":
-          description: Invalid input
-      security:
-        - petstore_auth:
-          - write_pets
-          - read_pets
-    delete:
-      tags:
-        - pet
-      summary: Deletes a pet
-      description: ""
-      operationId: deletePet
-      produces:
-        - application/json
-        - application/xml
-      parameters:
-        - in: header
-          name: api_key
-          description: ""
-          required: true
-          type: string
-        - in: path
-          name: petId
-          description: Pet id to delete
-          required: true
-          type: integer
-          format: int64
-      responses:
-        "400":
-          description: Invalid pet value
-      security:
-        - petstore_auth:
-          - write_pets
-          - read_pets
-  /stores/order:
-    post:
-      tags:
-        - store
-      summary: Place an order for a pet
-      description: ""
-      operationId: placeOrder
-      produces:
-        - application/json
-        - application/xml
-      parameters:
-        - in: body
-          name: body
-          description: order placed for purchasing the pet
-          required: false
-          schema:
-            $ref: "#/definitions/Order"
-      responses:
-        "200":
-          description: successful operation
-          schema:
-            $ref: "#/definitions/Order"
-        "400":
-          description: Invalid Order
-  /stores/order/{orderId}:
-    get:
-      tags:
-        - store
-      summary: Find purchase order by ID
-      description: For valid response try integer IDs with value <= 5 or > 10. Other values will generated exceptions
-      operationId: getOrderById
-      produces:
-        - application/json
-        - application/xml
-      parameters:
-        - in: path
-          name: orderId
-          description: ID of pet that needs to be fetched
-          required: true
-          type: string
-      responses:
-        "404":
-          description: Order not found
-        "200":
-          description: successful operation
-          schema:
-            $ref: "#/definitions/Order"
-        "400":
-          description: Invalid ID supplied
-    delete:
-      tags:
-        - store
-      summary: Delete purchase order by ID
-      description: For valid response try integer IDs with value < 1000. Anything above 1000 or nonintegers will generate API errors
-      operationId: deleteOrder
-      produces:
-        - application/json
-        - application/xml
-      parameters:
-        - in: path
-          name: orderId
-          description: ID of the order that needs to be deleted
-          required: true
-          type: string
-      responses:
-        "404":
-          description: Order not found
-        "400":
-          description: Invalid ID supplied
-  /users:
-    post:
-      tags:
-        - user
-      summary: Create user
-      description: This can only be done by the logged in user.
-      operationId: createUser
-      produces:
-        - application/json
-        - application/xml
-      parameters:
-        - in: body
-          name: body
-          description: Created user object
-          required: false
-          schema:
-            $ref: "#/definitions/User"
-      responses:
-        default:
-          description: successful operation
-  /users/createWithArray:
-    post:
-      tags:
-        - user
-      summary: Creates list of users with given input array
-      description: ""
-      operationId: createUsersWithArrayInput
-      produces:
-        - application/json
-        - application/xml
-      parameters:
-        - in: body
-          name: body
-          description: List of user object
-          required: false
+        '200':
+          description: OK
           schema:
             type: array
             items:
-              $ref: "#/definitions/User"
-      responses:
-        default:
-          description: successful operation
-  /users/createWithList:
-    post:
+              $ref: '#/definitions/SchoolBusNote'
+        "404":
+           description: SchoolBus not found
+    parameters:
+      - name: schoolbus-id
+        in: path
+        description: Id of SchoolBus to fetch notes for
+        required: true
+        type: integer
+  /schoolbus/{schoolbus-id}/attachments:
+    get:
+      description: Returns attachments for a particular SchoolBus
       tags:
-        - user
-      summary: Creates list of users with given input array
-      description: ""
-      operationId: createUsersWithListInput
+        - SchoolBus
       produces:
+        - text/plain
         - application/json
-        - application/xml
-      parameters:
-        - in: body
-          name: body
-          description: List of user object
-          required: false
+        - text/json
+      responses:
+        '200':
+          description: OK
           schema:
             type: array
             items:
-              $ref: "#/definitions/User"
-      responses:
-        default:
-          description: successful operation
-  /users/login:
-    get:
-      tags:
-        - user
-      summary: Logs user into the system
-      description: ""
-      operationId: loginUser
-      produces:
-        - application/json
-        - application/xml
-      parameters:
-        - in: query
-          name: username
-          description: The user name for login
-          required: false
-          type: string
-        - in: query
-          name: password
-          description: The password for login in clear text
-          required: false
-          type: string
-      responses:
-        "200":
-          description: successful operation
-          schema:
-            type: string
-        "400":
-          description: Invalid username/password supplied
-  /users/logout:
-    get:
-      tags:
-        - user
-      summary: Logs out current logged in user session
-      description: ""
-      operationId: logoutUser
-      produces:
-        - application/json
-        - application/xml
-      responses:
-        default:
-          description: successful operation
-  /users/{username}:
-    get:
-      tags:
-        - user
-      summary: Get user by user name
-      description: ""
-      operationId: getUserByName
-      produces:
-        - application/json
-        - application/xml
-      parameters:
-        - in: path
-          name: username
-          description: The name that needs to be fetched. Use user1 for testing.
-          required: true
-          type: string
-      responses:
+              $ref: '#/definitions/SchoolBusAttachment'
         "404":
-          description: User not found
-        "200":
-          description: successful operation
-          schema:
-            $ref: "#/definitions/User"
-        "400":
-          description: Invalid username supplied
-    put:
+           description: SchoolBus not found
+    parameters:
+      - name: schoolbus-id
+        in: path
+        description: Id of SchoolBus to fetch attachments for
+        required: true
+        type: integer
+  /schoolbus/{schoolbus-id}/history:
+    get:
+      description: Returns History for a particular SchoolBus
       tags:
-        - user
-      summary: Updated user
-      description: This can only be done by the logged in user.
-      operationId: updateUser
+        - SchoolBus
       produces:
+        - text/plain
         - application/json
-        - application/xml
-      parameters:
-        - in: path
-          name: username
-          description: name that need to be deleted
-          required: true
-          type: string
-        - in: body
-          name: body
-          description: Updated user object
-          required: false
+        - text/json
+      responses:
+        '200':
+          description: OK
           schema:
-            $ref: "#/definitions/User"
-      responses:
-        "404":
-          description: User not found
-        "400":
-          description: Invalid user supplied
-    delete:
+            type: array
+            items:
+              $ref: '#/definitions/SchoolBusHistory'
+    parameters:
+      - name: schoolbus-id
+        in: path
+        description: Id of SchoolBus to fetch SchoolBusHistory for
+        required: true
+        type: integer
+  /schoolbus/{schoolbus-id}/ccwdata:
+    get:
+      description: Returns CCWData for a particular Schoolbus
       tags:
-        - user
-      summary: Delete user
-      description: This can only be done by the logged in user.
-      operationId: deleteUser
+        - Owner
       produces:
+        - text/plain
         - application/json
-        - application/xml
-      parameters:
-        - in: path
-          name: username
-          description: The name that needs to be deleted
-          required: true
-          type: string
+        - text/json
       responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/CCWData'
+    parameters:
+      - name: schoolbus-id
+        in: path
+        description: Id of SchoolBus to fetch CCWData for
+        required: true
+        type: integer      
+  /owner/{owner-id}:
+    get:
+      description: Returns a particular Owner
+      tags:
+        - Owner
+      produces:
+        - text/plain
+        - application/json
+        - text/json
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/Owner'
+    parameters:
+      - name: owner-id
+        in: path
+        description: Id of Owner to fetch
+        required: true
+        type: integer
+  /owner/{owner-id}/attachments:
+    get:
+      description: Returns attachments for a particular Owner
+      tags:
+        - SchoolBus
+      produces:
+        - text/plain
+        - application/json
+        - text/json
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/OwnerAttachments'
+    parameters:
+      - name: owner-id
+        in: path
+        description: Id of Owner to fetch attachments for
+        required: true
+        type: integer
+  /owner/{owner-id}/notes:
+    get:
+      description: Returns notes for a particular Owner
+      tags:
+        - Owner
+      produces:
+        - text/plain
+        - application/json
+        - text/json
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/OwnerNotes'
+    parameters:
+      - name: owner-id
+        in: path
+        description: Id of Owner to fetch notes for
+        required: true
+        type: integer
+  /owner/{owner-id}/contactphones:
+    get:
+      description: Returns phone contacts for a particular Owner
+      tags:
+        - Owner
+      produces:
+        - text/plain
+        - application/json
+        - text/json
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/OwnerContactPhone'
+    parameters:
+      - name: owner-id
+        in: path
+        description: Id of Owner to fetch contact phone for
+        required: true
+        type: integer
+  /owner/{owner-id}/contactaddresses:
+    get:
+      description: Returns address contacts for a particular Owner
+      tags:
+        - Owner
+      produces:
+        - text/plain
+        - application/json
+        - text/json
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/OwnerContactAddress'    
+    parameters:
+      - name: owner-id
+        in: path
+        description: Id of Owner to fetch contact address for
+        required: true
+        type: integer
+  /favoritecontexttypes:
+    get:
+      description: Returns list of available FavoriteContextTypes
+      tags:
+        - Owner
+      produces:
+        - text/plain
+        - application/json
+        - text/json
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/FavoriteContextType'
+  /users/{user-id}:
+    get:
+      description: Returns data for a particular User
+      tags:
+        - User
+      produces:
+        - text/plain
+        - application/json
+        - text/json
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/User'    
         "404":
-          description: User not found
-        "400":
-          description: Invalid username supplied
-securityDefinitions:
-  api_key:
-    type: apiKey
-    name: api_key
-    in: header
-  petstore_auth:
-    type: oauth2
-    authorizationUrl: http://petstore.swagger.io/api/oauth/dialog
-    flow: implicit
-    scopes:
-      write_pets: modify pets in your account
-      read_pets: read your pets
+           description: User not found
+    parameters:
+      - name: user-id
+        in: path
+        description: Id of User to fetch
+        required: true
+        type: integer
+  /users/{user-id}/favorites:
+    get:
+      description: Returns a user's favorites of a given context type
+      tags:
+        - Owner
+      produces:
+        - text/plain
+        - application/json
+        - text/json
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/UserFavorite'
+        "404":
+           description: User not found
+    parameters:
+      - name: user-id
+        in: path
+        description: Id of User to fetch favorites for
+        required: true
+        type: integer
+  /users/{user-id}/notifications:
+    get:
+      description: Returns a user's notifications
+      tags:
+        - User
+      produces:
+        - text/plain
+        - application/json
+        - text/json
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/UserNotifications'
+    parameters:
+      - name: user-id
+        in: path
+        description: Id of User to fetch notifications for
+        required: true
+        type: integer
+  /regions:
+    get:
+      description: Returns a list of regions for a given province
+      tags:
+        - SchoolDistrict
+      produces:
+        - text/plain
+        - application/json
+        - text/json
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/Region'    
+  /regions/{region-id}:
+    get:
+      description: Returns a specific region
+      tags:
+        - Region
+      produces:
+        - text/plain
+        - application/json
+        - text/json
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/Region'
+    parameters:
+      - name: region-id
+        in: path
+        description: Id of Regions to fetch
+        required: true
+        type: integer  
+  /regions/{region-id}/cities:
+    get:
+      description: Returns a list of cities for a given region
+      tags:
+        - City
+      produces:
+        - text/plain
+        - application/json
+        - text/json
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/City'
+    parameters:
+      - name: region-id
+        in: path
+        description: Id of Region to fetch Cities for
+        required: true
+        type: integer
+  /regions/{region-id}/localareas:
+    get:
+      description: Returns a list of LocalAreas for a given region
+      tags:
+        - LocalArea
+        - Region
+      produces:
+        - text/plain
+        - application/json
+        - text/json
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/LocalArea'
+    parameters:
+      - name: region-id
+        in: path
+        description: Id of Region to fetch SchoolDistricts for
+        required: true
+        type: integer        
+  /regions/{region-id}/schooldistricts:
+    get:
+      description: Returns a list of SchoolDistricts for a given region
+      tags:
+        - SchoolDistrict
+      produces:
+        - text/plain
+        - application/json
+        - text/json
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/SchoolDistrict'
+    parameters:
+      - name: region-id
+        in: path
+        description: Id of Region to fetch SchoolDistricts for
+        required: true
+        type: integer
 definitions:
-  User:
-    type: object
-    properties:
-      id:
-        type: integer
-        format: int64
-      username:
-        type: string
-      firstName:
-        type: string
-      lastName:
-        type: string
-      email:
-        type: string
-      password:
-        type: string
-      phone:
-        type: string
-      userStatus:
-        type: integer
-        format: int32
-        description: User Status
-  Category:
-    type: object
-    properties:
-      id:
-        type: integer
-        format: int64
-      name:
-        type: string
-  Pet:
+  SchoolBus:
     type: object
     required:
-      - name
-      - photoUrls
+      - Id
     properties:
-      id:
-        type: integer
-        format: int64
-      category:
-        $ref: "#/definitions/Category"
-      name:
-        type: string
-        example: doggie
-      photoUrls:
-        type: array
-        items:
-          type: string
-      tags:
-        type: array
-        items:
-          $ref: "#/definitions/Tag"
-      status:
-        type: string
-        description: pet status in the store
-  Tag:
-    type: object
-    properties:
-      id:
-        type: integer
-        format: int64
-      name:
-        type: string
-  Order:
-    type: object
-    properties:
-      id:
-        type: integer
-        format: int64
-      petId:
-        type: integer
-        format: int64
-      quantity:
-        type: integer
+      Id:
         format: int32
-      shipDate:
+        type: integer
+        description: Primary Key
+        x-type-options:
+          min: 1
+          max: 1000
+      Owner:
+        $ref: '#/definitions/Owner'
+      CRNO:
+        type: string
+        description: CR Number.
+      LesseeNumber:
+        type: integer
+      LicenseExpiryDate:
         type: string
         format: date-time
-      status:
+      PermitExpiryDate:
         type: string
-        description: Order Status
-      complete:
-        type: boolean
+        format: date-time
+      NextInspectionDate:
+        type: string
+        format: date-time
+      ManYear:
+        type: integer
+      SB_Cap:
+        type: string
+      MC_Cap:
+        type: string
+      WC_Cap:
+        type: string
+      LastUpdate:
+        type: string
+        format: date-time
+      Plate:
+        type: string
+        x-chance-type: word
+      CCWData:
+        $ref: '#/definitions/CCWData'
+  SchoolBusNote:
+    type: object
+    required:
+      - Id 
+    properties:
+      Id:
+        format: int32
+        type: integer
+        description: Primary Key
+        x-type-options:
+          min: 1
+          max: 1000
+      SchoolBus:
+          $ref: '#/definitions/SchoolBus'
+  SchoolBusAttachment:
+    type: object
+    required:
+      - Id  
+    properties:
+      Id:
+        format: int32
+        type: integer
+        description: Primary Key
+        x-type-options:
+          min: 1
+          max: 1000
+      SchoolBus:
+          $ref: '#/definitions/SchoolBus'
+  SchoolBusHistory:
+    type: object
+    required:
+      - Id    
+    properties:
+      Id:
+        format: int32
+        type: integer
+        description: Primary Key
+        x-type-options:
+          min: 1
+          max: 1000
+      SchoolBus:
+          $ref: '#/definitions/SchoolBus'
+  Owner:
+    type: object
+    required:
+      - Id    
+    properties:
+      Id:
+        format: int32
+        type: integer
+        description: Primary Key
+        x-type-options:
+          min: 1
+          max: 1000
+      FleetNum:
+        format: int32
+        type: integer
+      MCCode:
+        type: string
+      FleetSize:
+        type: string
+      HasBuses:
+        type: integer
+      Diff:
+        type: string
+      LeaseSize:
+        type: string
+      HasDups:
+        type: integer
+      SchoolDistrict:
+        $ref: '#/definitions/SchoolDistrict'
+      City: 
+        $ref: '#/definitions/City'
+  OwnerAttachments:
+    type: object
+    required:
+      - Id    
+    properties:
+      Id:
+        format: int32
+        type: integer
+        description: Primary Key
+        x-type-options:
+          min: 1
+          max: 1000
+      Owner:
+          $ref: '#/definitions/Owner'    
+  OwnerNotes:
+    type: object
+    required:
+      - Id    
+    properties:
+      Id:
+        format: int32
+        type: integer
+        description: Primary Key
+        x-type-options:
+          min: 1
+          max: 1000
+      Owner:
+          $ref: '#/definitions/Owner'    
+  OwnerContact:
+    type: object
+    required:
+      - Id    
+    properties:
+      Id:
+        format: int32
+        type: integer
+        description: Primary Key
+        x-type-options:
+          min: 1
+          max: 1000
+      Owner:
+          $ref: '#/definitions/Owner'    
+  OwnerContactPhone:
+    type: object
+    required:
+      - Id    
+    properties:
+      Id:
+        format: int32
+        type: integer
+        description: Primary Key
+        x-type-options:
+          min: 1
+          max: 1000
+      OwnerContact:
+          $ref: '#/definitions/OwnerContact'    
+  OwnerContactAddress:
+    type: object
+    required:
+      - Id    
+    properties:
+      Id:
+        format: int32
+        type: integer
+        description: Primary Key
+        x-type-options:
+          min: 1
+          max: 1000
+      OwnerContact:
+          $ref: '#/definitions/OwnerContact'    
+  CCWData:
+    type: object
+    required:
+      - Id    
+    properties:
+      Id:
+        format: int32
+        type: integer
+        description: Primary Key
+        x-type-options:
+          min: 1
+          max: 1000
+      ModelYear:
+        format:  int32
+        type: integer
+        description: Vehicle Year
+        x-type-options:
+          min: 1970
+          max: 2017
+      RateClass:
+        type: string
+      CVIPDecal:
+        type: string
+      FleetUnitNo: 
+        type: integer
+      GVW:
+        type: integer
+      Body:
+        type: string
+      RebuiltStatus:
+        type: string
+      CVIPExpiry:
+        type: string
+        format: date-time
+      NetWt:
+        type: integer
+      Model:
+        type: string
+      Fuel:
+        type: string
+      SeatingCapacity:
+        type: integer
+      Colour:
+        type: string	  			
+  Inspection:
+    required:
+      - Id  
+    type: object
+    properties:
+      Id:
+          format: int32
+          type: integer
+          description: Primary Key
+          x-type-options:
+            min: 1
+            max: 1000
+      SchoolBus:
+        $ref: '#/definitions/SchoolBus'
+      Inspector:
+        $ref: '#/definitions/User'
+  User:
+    type: object
+    required:
+      - Id  
+    properties:
+      Id:
+        format: int32
+        type: integer
+        description: Primary Key
+        x-type-options:
+          min: 1
+          max: 1000
+      Email:
+        type: string
+        description:  Email address
+        x-chance-type: email
+      SmUserId:
+        type: string
+        description:  Security Manager User ID
+        x-chance-type:  
+      GivenName:
+        type: string
+        description:  Last Name
+  FavoriteContextType:
+    type: object
+    required:
+      - Id    
+    properties:
+      Id:
+        format: int32
+        type: integer
+        description: Primary Key
+        x-type-options:
+          min: 1
+          max: 1000
+      Name:
+        type: string
+        description:  Context Name
+        x-chance-type: name
+  UserFavorite:
+    type: object
+    required:
+      - Id  
+    properties:
+      Id:
+        format: int32
+        type: integer
+        description: Primary Key
+        x-type-options:
+          min: 1
+          max: 1000
+      JsonData:
+        type: string
+        description:  Saved search
+        x-chance-type: word
+      Name: 
+        type: string
+        description:  Context Name
+        x-chance-type: name
+  BusNotification:
+    type: object
+    required:
+      - Id  
+    properties:
+      Id:
+          format: int32
+          type: integer
+          description: Primary Key
+          x-type-options:
+            min: 1
+            max: 1000
+      SchoolBus:
+        $ref: '#/definitions/SchoolBus'
+  UserNotifications:
+    type: object
+    required:
+      - Id  
+    properties:
+      Id:
+          format: int32
+          type: integer
+          description: Primary Key
+          x-type-options:
+            min: 1
+            max: 1000
+      BusNotification:
+        $ref: '#/definitions/BusNotification'
+      User:
+        $ref: '#/definitions/User'
+  Region:
+    type: object
+    required:
+      - Id  
+    properties:
+      Id:
+          format: int32
+          type: integer
+          description: Primary Key
+          x-type-options:
+            min: 1
+            max: 1000
+  City:
+    type: object
+    required:
+      - Id  
+    properties:
+      Id:
+          format: int32
+          type: integer
+          description: Primary Key
+          x-type-options:
+            min: 1
+            max: 1000
+      Region:
+        $ref: '#/definitions/Region'
+  LocalArea:
+    type: object
+    required:
+      - Id  
+    properties:
+      Id:
+          format: int32
+          type: integer
+          description: Primary Key
+          x-type-options:
+            min: 1
+            max: 1000
+      Region:
+        $ref: '#/definitions/Region'
+  SchoolDistrict:
+    type: object
+    required:
+      - Id  
+    properties:
+      Id:
+          format: int32
+          type: integer
+          description: Primary Key
+          x-type-options:
+            min: 1
+            max: 1000
+      LocalArea:
+        $ref: '#/definitions/LocalArea'
+securityDefinitions: {}
