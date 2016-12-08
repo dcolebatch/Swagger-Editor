@@ -8,7 +8,10 @@ var serve = require('koa-static');
 const server = koa()
 	.use(mount('/export', serve('.')))	
     .use(swagger({
-        statics: __dirname + '/swagger-editor/dist', // path to extracted swagger-editor.zip
+		defaults:{
+		  useYamlBackend:false
+		},
+        statics: __dirname + '/editor', // path to extracted swagger-editor.zip
         specFile: __dirname + '/swagger.yaml' // where we want to save our api specs
     }))		
     .listen(8080);
