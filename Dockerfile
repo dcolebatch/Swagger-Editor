@@ -1,4 +1,4 @@
-FROM spujadas/swagger-editor-docker
+FROM swaggerapi/swagger-editor
 
 RUN mkdir -p /app
 COPY . /app
