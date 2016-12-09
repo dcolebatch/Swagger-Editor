@@ -11,7 +11,7 @@ const server = koa()
 		defaults:{
 		  useYamlBackend:false
 		},
-        statics: __dirname + '/editor', // path to extracted swagger-editor.zip
+        statics: '/editor', // path to swagger-editor source
         specFile: __dirname + '/swagger.yaml' // where we want to save our api specs
     }))		
     .listen(8080);
