@@ -1,4 +1,4 @@
-FROM swaggerapi/swagger-editor
+FROM swaggerapi/swagger-editor:v2.9.9
 
 USER 0
 
